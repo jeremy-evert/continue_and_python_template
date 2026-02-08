@@ -17,14 +17,15 @@ We optimize for:
 
 ## ✅ Previous Items (short list)
 
-- fresh repo ritual verified (template UI → clean clone → scripts → CI green)
-- pre-commit verified via:
-  - `.\.venv\Scripts\python.exe -m pre_commit run --all-files`
-  - python -m pre_commit run --all-files
-  - scripts/precommit.ps1
-- Ollama dial tone verified (check.ps1 -WithOllama works; default + explicit model)
-  - `pwsh .\scripts\check.ps1 -WithOllama`
-  - `pwsh .\scripts\check.ps1 -WithOllama -Model "llama3.2:3b"`
+- [x] fresh repo ritual verified (template UI → clean clone → scripts → CI green)
+- [x] pre-commit verified via:
+- [x] `.\.venv\Scripts\python.exe -m pre_commit run --all-files`
+- [x] python -m pre_commit run --all-files
+- [x] scripts/precommit.ps1
+- [x] Ollama dial tone verified (check.ps1 -WithOllama works; default + explicit model)
+- [x] `pwsh .\scripts\check.ps1 -WithOllama`
+- [x] `pwsh .\scripts\check.ps1 -WithOllama -Model "llama3.2:3b"`
+- [x] dial tone + check.ps1 -WithOllama is verified
 
 ---
 ## 🧱 Next (keep this list small)
@@ -77,7 +78,7 @@ Deliverable:
 ### 5) Continue + Ollama CPU-only dial tone (the whole point)
 Goal: Continue can reliably use local CPU models via Ollama.
 
-- [x] dial tone + check.ps1 -WithOllama is verified
+
 - [ ] verify Continue configuration is actually used by VS Code:
   - repo-local config present (`.continue/` if used)
   - rules/prompts referenced from `docs/continue/`

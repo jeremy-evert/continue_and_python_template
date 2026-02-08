@@ -87,7 +87,6 @@ Tip for last ~30 lines:
 ```powershell
 pwsh .\scripts\check.ps1 2>&1 | Select-Object -Last 30
 ```
-* “If pre-commit is not recognized, run: pwsh .\scripts\precommit.ps1”
 ---
 
 ### 4) Expected vs Actual (two short sentences)
@@ -141,6 +140,10 @@ Run:
 
 ```powershell
 pytest -q
+```
+### ❌ Pre-commit not recognized
+```powershell
+pwsh .\scripts\precommit.ps1
 ```
 
 ---
