@@ -1,0 +1,4 @@
+Return ONLY a unified diff (git apply format).
+Create src/python_template/core/fizzbuzz.py with fizzbuzz(n: int) -> list[str] returning the classic 1..n list (Fizz, Buzz, FizzBuzz).
+Create tests/test_fizzbuzz.py covering n=15.
+Keep ruff/format clean and pytest green.
