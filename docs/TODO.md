@@ -30,13 +30,14 @@ We optimize for:
 ### 1) Re-verify “fresh repo ritual” (template clone → green)
 Goal: click → clone → green checks in under 10 minutes.
 
-- [ ] create a brand-new repo from this template (GitHub UI)
-- [ ] clone it to a clean folder (no prior venv)
-- [ ] run:
+- [ ] confirm this repo is enabled as a GitHub Template repository (Settings → Template repository)
+- [x] create a brand-new repo from this template (GitHub UI)
+- [x] clone it to a clean folder (no prior venv)
+- [x] run:
   - `pwsh .\scripts\setup_precommit.ps1`
   - `pwsh .\scripts\check.ps1 -Fast`
   - `pwsh .\scripts\doctor.ps1 -Fast`
-- [ ] confirm CI goes green automatically on first push
+- [x] confirm CI goes green automatically on first push
 
 Deliverable:
 - [ ] verified student-zero path (no tribal knowledge required)
