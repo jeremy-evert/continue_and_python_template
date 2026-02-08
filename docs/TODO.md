@@ -17,6 +17,14 @@ We optimize for:
 
 ## ✅ Previous Items (short list)
 
+- fresh repo ritual verified (template UI → clean clone → scripts → CI green)
+- pre-commit verified via:
+  - `.\.venv\Scripts\python.exe -m pre_commit run --all-files`
+  - python -m pre_commit run --all-files
+  - scripts/precommit.ps1
+- Ollama dial tone verified (check.ps1 -WithOllama works; default + explicit model)
+  - `pwsh .\scripts\check.ps1 -WithOllama`
+  - `pwsh .\scripts\check.ps1 -WithOllama -Model "llama3.2:3b"`
 
 ---
 ## 🧱 Next (keep this list small)
@@ -55,7 +63,7 @@ Deliverable:
 ### 4) Pre-commit friction check (PATH + staging + auto-fixes)
 Goal: students can run pre-commit without PATH weirdness or confusion.
 
-- [ ] confirm `scripts/precommit.ps1` exists and works in a fresh clone:
+- [x] confirm `scripts/precommit.ps1` exists and works in a fresh clone:
   - runs venv-first: `.\.venv\Scripts\python.exe -m pre_commit run --all-files`
 - [ ] confirm README + GET_HELP recommend:
   - `pwsh .\scripts\precommit.ps1`
@@ -69,7 +77,7 @@ Deliverable:
 ### 5) Continue + Ollama CPU-only dial tone (the whole point)
 Goal: Continue can reliably use local CPU models via Ollama.
 
-
+- [x] dial tone + check.ps1 -WithOllama is verified
 - [ ] verify Continue configuration is actually used by VS Code:
   - repo-local config present (`.continue/` if used)
   - rules/prompts referenced from `docs/continue/`
@@ -89,10 +97,14 @@ Deliverable:
 - [ ] confirm this repo is enabled as a GitHub Template repository (Settings → Template repository)
 
 ### 7) Test the template with a project
+- [ ] create a new repo from the template
+- [ ] build one tiny tool/function with tests
+- [ ] confirm CI stays green
+- [ ] confirm student-zero UX is still under 10 minutes
 
 ## Definition of Done (this repo as a template)
-- [ ] Fresh repo passes the “10-minute green” ritual
+- [x] Fresh repo passes the “10-minute green” ritual
 - [ ] Encoding recovery verified (`fix_docs_utf8.ps1` works)
 - [ ] Line ending noise controlled (`.gitattributes` verified)
-- [ ] Pre-commit wrapper verified on a clean Windows machine
+- [x] Pre-commit wrapper verified on a clean Windows machine
 - [ ] Continue + Ollama CPU-only workflow verified (edit → tests pass → CI green)
