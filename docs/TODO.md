@@ -57,7 +57,13 @@ Goal: Continue can reliably use local CPU models via Ollama.
 
 Deliverable:
 - [ ] confirmed “CPU-only local assistant” works end-to-end
+---
 
+### 1B) Continue CLI work
+ - [ ] cn_apply.ps1: normalize model output into a valid git apply patch (strip fences, trim to diff --git)
+ - [ ]  cn_apply.ps1: fail hard on native command nonzero exit codes (git apply --check, git apply)
+ - [ ] cn_apply.ps1: treat check.ps1 pass/fail via exit code (not string match)
+ - [ ] Run fizzbuzz smoke test end-to-end via CLI harness and commit results
 ---
 ### 2) Pre-commit friction check (PATH + staging + auto-fixes)
 Goal: students can run pre-commit without PATH weirdness or confusion.
