@@ -18,7 +18,7 @@ We optimize for:
 ## ✅ Done (short list)
 - repo scaffold + baseline tooling (ruff/pytest)
 - [x] fresh repo ritual verified (template UI → clean clone → scripts → CI green)
-- [x]setup_precommit.ps1 verified (hooks install + pre-commit first run)
+- [x] setup_precommit.ps1 verified (hooks install + pre-commit first run)
 - pre-commit installed + working
 - `check.ps1` + `doctor.ps1` working
 - CI fast-check on push/PR
@@ -95,7 +95,7 @@ Deliverable:
 Goal: Continue can reliably use local CPU models via Ollama.
 
 - [ ] add/verify a single “AI is alive” script:
-  - `scripts/ollama_smoke_test.ps1`
+  - `scripts/ollama_dial_tone.ps1`
   - checks: CLI exists, server reachable, at least one model available
 - [ ] verify Continue configuration is actually used by VS Code:
   - repo-local config present (`.continue/` if used)
