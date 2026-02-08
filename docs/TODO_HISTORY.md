@@ -3,6 +3,42 @@
 This file preserves the story of how `docs/TODO.md` evolved.
 Rule: `docs/TODO.md` stays short (next actions only). This file holds the longer narrative and “why”.
 
+
+
+## transfer from todo.md at 2026 02 08 14:29
+- repo scaffold + baseline tooling (ruff/pytest)
+- [x] fresh repo ritual verified (template UI → clean clone → scripts → CI green)
+- [x] setup_precommit.ps1 verified (hooks install + pre-commit first run)
+- pre-commit installed + working
+- `check.ps1` + `doctor.ps1` working
+- CI fast-check on push/PR
+- docs: template usage + help + encoding recovery
+- Continue docs + starter rules/prompts present (repo-local docs)
+
+---
+## other
+  - [x]  run pwsh .\scripts\check.ps1 -WithOllama -Model "llama3.2:3b" once to prove the wiring works
+  - [x] add/verify a single “AI is alive” script:
+  - `scripts/ollama_dial_tone.ps1`
+  - checks: CLI exists, server reachable, at least one model available
+
+---
+
+### 1) Re-verify “fresh repo ritual” (template clone → green)
+Goal: click → clone → green checks in under 10 minutes.
+
+- [x] create a brand-new repo from this template (GitHub UI)
+- [x] clone it to a clean folder (no prior venv)
+- [x] run:
+  - `pwsh .\scripts\setup_precommit.ps1`
+  - `pwsh .\scripts\check.ps1 -Fast`
+  - `pwsh .\scripts\doctor.ps1 -Fast`
+- [x] confirm CI goes green automatically on first push
+
+Deliverable:
+- [x] verified student-zero path (no tribal knowledge required)
+
+
 ## Era 0: Bootstrapping (scaffold → hooks → check/doctor → CI)
 - Repo scaffold, ruff/pytest, pre-commit, check.ps1, doctor.ps1, CI fast-check.
 

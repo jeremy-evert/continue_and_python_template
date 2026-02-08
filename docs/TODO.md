@@ -16,31 +16,7 @@ We optimize for:
 ---
 
 ## ✅ Previous Items (short list)
-- repo scaffold + baseline tooling (ruff/pytest)
-- [x] fresh repo ritual verified (template UI → clean clone → scripts → CI green)
-- [x] setup_precommit.ps1 verified (hooks install + pre-commit first run)
-- pre-commit installed + working
-- `check.ps1` + `doctor.ps1` working
-- CI fast-check on push/PR
-- docs: template usage + help + encoding recovery
-- Continue docs + starter rules/prompts present (repo-local docs)
 
----
-
-### 1) Re-verify “fresh repo ritual” (template clone → green)
-Goal: click → clone → green checks in under 10 minutes.
-
-
-- [x] create a brand-new repo from this template (GitHub UI)
-- [x] clone it to a clean folder (no prior venv)
-- [x] run:
-  - `pwsh .\scripts\setup_precommit.ps1`
-  - `pwsh .\scripts\check.ps1 -Fast`
-  - `pwsh .\scripts\doctor.ps1 -Fast`
-- [x] confirm CI goes green automatically on first push
-
-Deliverable:
-- [x] verified student-zero path (no tribal knowledge required)
 
 ---
 ## 🧱 Next (keep this list small)
@@ -93,9 +69,7 @@ Deliverable:
 ### 5) Continue + Ollama CPU-only dial tone (the whole point)
 Goal: Continue can reliably use local CPU models via Ollama.
 
-- [ ] add/verify a single “AI is alive” script:
-  - `scripts/ollama_dial_tone.ps1`
-  - checks: CLI exists, server reachable, at least one model available
+
 - [ ] verify Continue configuration is actually used by VS Code:
   - repo-local config present (`.continue/` if used)
   - rules/prompts referenced from `docs/continue/`
@@ -104,7 +78,7 @@ Goal: Continue can reliably use local CPU models via Ollama.
   - run a Continue prompt (“simplify function”, “add tests”, etc.)
   - apply patch
   - run `pwsh .\scripts\check.ps1 -Fast` and stay green
-  - [ ]  run pwsh .\scripts\check.ps1 -WithOllama -Model "llama3.2:3b" once to prove the wiring work
+
 
 Deliverable:
 - [ ] confirmed “CPU-only local assistant” works end-to-end
