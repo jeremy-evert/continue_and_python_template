@@ -15,7 +15,7 @@ We optimize for:
 
 ---
 
-## ✅ Done (short list)
+## ✅ Previous Items (short list)
 - repo scaffold + baseline tooling (ruff/pytest)
 - [x] fresh repo ritual verified (template UI → clean clone → scripts → CI green)
 - [x] setup_precommit.ps1 verified (hooks install + pre-commit first run)
@@ -26,8 +26,6 @@ We optimize for:
 - Continue docs + starter rules/prompts present (repo-local docs)
 
 ---
-
-## 🧱 Next (keep this list small)
 
 ### 1) Re-verify “fresh repo ritual” (template clone → green)
 Goal: click → clone → green checks in under 10 minutes.
@@ -45,6 +43,7 @@ Deliverable:
 - [x] verified student-zero path (no tribal knowledge required)
 
 ---
+## 🧱 Next (keep this list small)
 
 ### 2) Re-verify encoding “disaster recovery” (Windows mojibake/BOM)
 Goal: docs never stay broken; recovery is one command.
@@ -105,7 +104,7 @@ Goal: Continue can reliably use local CPU models via Ollama.
   - run a Continue prompt (“simplify function”, “add tests”, etc.)
   - apply patch
   - run `pwsh .\scripts\check.ps1 -Fast` and stay green
-  - [ ] run pwsh .\scripts\check.ps1 -WithOllama once (if that flag exists in your script) to prove the wiring works
+  - [ ]  run pwsh .\scripts\check.ps1 -WithOllama -Model "llama3.2:3b" once to prove the wiring work
 
 Deliverable:
 - [ ] confirmed “CPU-only local assistant” works end-to-end
