@@ -64,6 +64,7 @@ Deliverable:
  - [ ]  cn_apply.ps1: fail hard on native command nonzero exit codes (git apply --check, git apply)
  - [ ] cn_apply.ps1: treat check.ps1 pass/fail via exit code (not string match)
  - [ ] Run fizzbuzz smoke test end-to-end via CLI harness and commit results
+
 ---
 ### 2) Pre-commit friction check (PATH + staging + auto-fixes)
 Goal: students can run pre-commit without PATH weirdness or confusion.
