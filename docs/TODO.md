@@ -18,32 +18,19 @@ We optimize for:
 ## ✅ Previous Items (short list)
 
 - [x] fresh repo ritual verified (template UI → clean clone → scripts → CI green)
-- [x] pre-commit verified via:
-- [x] `.\.venv\Scripts\python.exe -m pre_commit run --all-files`
-- [x] python -m pre_commit run --all-files
-- [x] scripts/precommit.ps1
+- [x] pre-commit verified (venv-first + wrapper)
+  - [x] `.\.venv\Scripts\python.exe -m pre_commit run --all-files`
+  - [x] `python -m pre_commit run --all-files`
+  - [x] `pwsh .\scripts\precommit.ps1`
 - [x] Ollama dial tone verified (check.ps1 -WithOllama works; default + explicit model)
-- [x] `pwsh .\scripts\check.ps1 -WithOllama`
-- [x] `pwsh .\scripts\check.ps1 -WithOllama -Model "llama3.2:3b"`
-- [x] dial tone + check.ps1 -WithOllama is verified
+  - [x] `pwsh .\scripts\check.ps1 -WithOllama`
+  - [x] `pwsh .\scripts\check.ps1 -WithOllama -Model "llama3.2:3b"`
+- [x] encoding recovery verified (UTF-8/BOM): injected BOM + fixed via `pwsh .\scripts\fix_docs_utf8.ps1`
+- [x] post-recovery toolchain verified: pre-commit stays green after recovery
+- [x] GET_HELP includes encoding recovery steps + detectors
+  - Note: scan may match intentional examples (detector ≠ broken docs)
 
----
 ## 🧱 Next (keep this list small)
-
-### 2) Re-verify encoding “disaster recovery” (Windows mojibake/BOM)
-Goal: docs never stay broken; recovery is one command.
-
-- [ ] intentionally introduce a known-bad encoding case in a scratch branch
-  - e.g., add a file with wrong encoding / weird characters
-- [ ] confirm:
-  - `pwsh .\scripts\fix_docs_utf8.ps1` restores docs to normal
-  - GET_HELP still points to the correct recovery steps
-- [ ] confirm pre-commit hooks don’t re-break or fight the fix
-
-Deliverable:
-- [ ] “docs are readable again” recovery validated end-to-end
-
----
 
 ### 3) Line ending noise control (CRLF/LF)
 Goal: stop churn in diffs across Windows/Linux.
@@ -66,7 +53,7 @@ Goal: students can run pre-commit without PATH weirdness or confusion.
 
 - [x] confirm `scripts/precommit.ps1` exists and works in a fresh clone:
   - runs venv-first: `.\.venv\Scripts\python.exe -m pre_commit run --all-files`
-- [ ] confirm README + GET_HELP recommend:
+- [x] confirm README + GET_HELP recommend:
   - `pwsh .\scripts\precommit.ps1`
 - [ ] document the “auto-fix loop” briefly (run, then `git add -A`, rerun if needed)
 
