@@ -25,12 +25,45 @@ We optimize for:
 - [x] Ollama dial tone verified (check.ps1 -WithOllama works; default + explicit model)
   - [x] `pwsh .\scripts\check.ps1 -WithOllama`
   - [x] `pwsh .\scripts\check.ps1 -WithOllama -Model "llama3.2:3b"`
+- [x] Continue config + Ollama models verified via pwsh .\scripts\continue_pulse.ps1 (and -Strict)
 - [x] encoding recovery verified (UTF-8/BOM): injected BOM + fixed via `pwsh .\scripts\fix_docs_utf8.ps1`
 - [x] post-recovery toolchain verified: pre-commit stays green after recovery
 - [x] GET_HELP includes encoding recovery steps + detectors
   - Note: scan may match intentional examples (detector ≠ broken docs)
 
 ## 🧱 Next (keep this list small)
+
+### 1) Continue + Ollama CPU-only dial tone (the whole point)
+Goal: Continue can reliably use local CPU models via Ollama.
+
+
+- [ ] In VS Code, confirm Continue model labels match config.yaml model names
+  - repo-local config present (`.continue/` if used)
+  - rules/prompts referenced from `docs/continue/`
+- [ ] verify a real workflow:
+  - open a Python file
+  - run a Continue prompt (“simplify function”, “add tests”, etc.)
+  - apply patch
+  - run `pwsh .\scripts\check.ps1 -Fast` and stay green
+
+
+Deliverable:
+- [ ] confirmed “CPU-only local assistant” works end-to-end
+
+---
+### 2) Pre-commit friction check (PATH + staging + auto-fixes)
+Goal: students can run pre-commit without PATH weirdness or confusion.
+
+- [x] confirm `scripts/precommit.ps1` exists and works in a fresh clone:
+  - runs venv-first: `.\.venv\Scripts\python.exe -m pre_commit run --all-files`
+- [x] confirm README + GET_HELP recommend:
+  - `pwsh .\scripts\precommit.ps1`
+- [ ] document the “auto-fix loop” briefly (run, then `git add -A`, rerun if needed)
+
+Deliverable:
+- [ ] zero “pre-commit not recognized” + predictable fix flow
+
+---
 
 ### 3) Line ending noise control (CRLF/LF)
 Goal: stop churn in diffs across Windows/Linux.
@@ -48,43 +81,11 @@ Deliverable:
 
 ---
 
-### 4) Pre-commit friction check (PATH + staging + auto-fixes)
-Goal: students can run pre-commit without PATH weirdness or confusion.
 
-- [x] confirm `scripts/precommit.ps1` exists and works in a fresh clone:
-  - runs venv-first: `.\.venv\Scripts\python.exe -m pre_commit run --all-files`
-- [x] confirm README + GET_HELP recommend:
-  - `pwsh .\scripts\precommit.ps1`
-- [ ] document the “auto-fix loop” briefly (run, then `git add -A`, rerun if needed)
-
-Deliverable:
-- [ ] zero “pre-commit not recognized” + predictable fix flow
-
----
-
-### 5) Continue + Ollama CPU-only dial tone (the whole point)
-Goal: Continue can reliably use local CPU models via Ollama.
-
-
-- [ ] verify Continue configuration is actually used by VS Code:
-  - repo-local config present (`.continue/` if used)
-  - rules/prompts referenced from `docs/continue/`
-- [ ] verify a real workflow:
-  - open a Python file
-  - run a Continue prompt (“simplify function”, “add tests”, etc.)
-  - apply patch
-  - run `pwsh .\scripts\check.ps1 -Fast` and stay green
-
-
-Deliverable:
-- [ ] confirmed “CPU-only local assistant” works end-to-end
-
----
-
-### 6) Deliver the template
+### 4) Deliver the template
 - [ ] confirm this repo is enabled as a GitHub Template repository (Settings → Template repository)
 
-### 7) Test the template with a project
+### 5) Test the template with a project
 - [ ] create a new repo from the template
 - [ ] build one tiny tool/function with tests
 - [ ] confirm CI stays green
@@ -92,7 +93,8 @@ Deliverable:
 
 ## Definition of Done (this repo as a template)
 - [x] Fresh repo passes the “10-minute green” ritual
-- [ ] Encoding recovery verified (`fix_docs_utf8.ps1` works)
+- [x] Encoding recovery verified (`fix_docs_utf8.ps1` works)
 - [ ] Line ending noise controlled (`.gitattributes` verified)
 - [x] Pre-commit wrapper verified on a clean Windows machine
+- [ ] Continue config + Ollama models verified (scripts/continue_pulse.ps1 -Strict)
 - [ ] Continue + Ollama CPU-only workflow verified (edit → tests pass → CI green)
