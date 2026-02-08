@@ -1,0 +1,19 @@
+name: fast-check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  fast-check:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fast repo health check
+        shell: pwsh
+        run: pwsh -NoProfile -File .\scripts\check.ps1 -Fast

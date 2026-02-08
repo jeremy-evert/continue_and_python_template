@@ -1,0 +1,71 @@
+# =========================
+# Python / venv
+# =========================
+.venv/
+venv/
+env/
+ENV/
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+# =========================
+# Packaging / build
+# =========================
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# =========================
+# Test / coverage
+# =========================
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+
+# =========================
+# Tool caches
+# =========================
+.ruff_cache/
+.mypy_cache/
+.pyre/
+.pytype/
+.cache/
+
+# =========================
+# IDE / editor
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# =========================
+# Logs / temp / archives
+# =========================
+*.log
+*.tmp
+*.bak
+*.old
+*.zip
+*.7z
+
+# =========================
+# Repo artifacts (template rule)
+# Keep folders, ignore contents
+# =========================
+runs/*
+reports/*
+!runs/.gitkeep
+!reports/.gitkeep
+
+# If you want to allow docs history but not archives:
+# docs/**/archive/
