@@ -37,9 +37,17 @@ We optimize for:
 Goal: Continue can reliably use local CPU models via Ollama.
 
 
-- [ ] In VS Code, confirm Continue model labels match config.yaml model names
-  - repo-local config present (`.continue/` if used)
+- [x] In VS Code, confirm Continue model labels match config.yaml model names
+  - config is loaded from ~/.continue/config.yaml (verified via model labels + pulse script)
   - rules/prompts referenced from `docs/continue/`
+- [ ] In VS Code, set Embed model to “Embeddings: Nomic Embed Text” (Ollama) instead of Transformers.js
+- [ ] Continue Apply Smoke Test
+  - In VS Code, open Continue chat and confirm model = Chat/Edit/Apply: Llama 3.2 3B (CPU-stable)
+  - Prompt to paste:
+    * Create src/python_template/core/fizzbuzz.py with fizzbuzz(n: int) -> list[str] returning the classic 1..n list (Fizz, Buzz, FizzBuzz). Add tests/test_fizzbuzz.py covering n=15. Make it ruff/format clean and pytest green.
+  - Hit Apply (so we test the apply pipeline)
+  - Run: `pwsh .\scripts\check.ps1 -Fast`
+  - Commit.
 - [ ] verify a real workflow:
   - open a Python file
   - run a Continue prompt (“simplify function”, “add tests”, etc.)
@@ -96,5 +104,5 @@ Deliverable:
 - [x] Encoding recovery verified (`fix_docs_utf8.ps1` works)
 - [ ] Line ending noise controlled (`.gitattributes` verified)
 - [x] Pre-commit wrapper verified on a clean Windows machine
-- [ ] Continue config + Ollama models verified (scripts/continue_pulse.ps1 -Strict)
+- [x] Continue config + Ollama models verified (scripts/continue_pulse.ps1 -Strict)
 - [ ] Continue + Ollama CPU-only workflow verified (edit → tests pass → CI green)
