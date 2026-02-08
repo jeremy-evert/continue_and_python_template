@@ -53,7 +53,7 @@ function Write-Warn($msg) { Write-Host "WARN: $msg" -ForegroundColor Yellow }
 function Write-Err($msg)  { Write-Host "ERR:  $msg" -ForegroundColor Red }
 
 function Get-RepoRoot {
-    $root = (& git rev-parse --show-toplevel 2>$null).Trim()
+    $root = (& git rev-parse --show-toplevel 2>$null | Out-String).Trim()
     if (-not $root) { throw "Not inside a git repo (git rev-parse failed)." }
     return $root
 }
@@ -128,7 +128,7 @@ $patchPath = Join-Path $OutDir "$Name.$timestamp.patch"
 $checkPath = Join-Path $OutDir "$Name.$timestamp.check.txt"
 
 # Safety: recommend starting clean (but don't force it)
-$porcelain = (& git status --porcelain).Trim()
+$porcelain = (& git status --porcelain | Out-String).Trim()
 if ($porcelain) {
     Write-Warn "Working tree not clean. That's OK, but patch application is safer on a clean tree."
 }
