@@ -1,7 +1,7 @@
 # TODO (Ranked)
 
-**Policy:** keep this file small (next actions only).  
-Append-only: don’t rewrite big sections, just add/mark items.  
+**Policy:** keep this file small (next actions only).
+Append-only: don’t rewrite big sections, just add/mark items.
 If it gets long, move narrative/detail to `docs/TODO_HISTORY.md`.
 
 This TODO is the single source of truth for what we do next.
