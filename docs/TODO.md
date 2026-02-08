@@ -17,6 +17,8 @@ We optimize for:
 
 ## ✅ Done (short list)
 - repo scaffold + baseline tooling (ruff/pytest)
+- [x] fresh repo ritual verified (template UI → clean clone → scripts → CI green)
+- [x]setup_precommit.ps1 verified (hooks install + pre-commit first run)
 - pre-commit installed + working
 - `check.ps1` + `doctor.ps1` working
 - CI fast-check on push/PR
@@ -30,7 +32,7 @@ We optimize for:
 ### 1) Re-verify “fresh repo ritual” (template clone → green)
 Goal: click → clone → green checks in under 10 minutes.
 
-- [ ] confirm this repo is enabled as a GitHub Template repository (Settings → Template repository)
+
 - [x] create a brand-new repo from this template (GitHub UI)
 - [x] clone it to a clean folder (no prior venv)
 - [x] run:
@@ -40,7 +42,7 @@ Goal: click → clone → green checks in under 10 minutes.
 - [x] confirm CI goes green automatically on first push
 
 Deliverable:
-- [ ] verified student-zero path (no tribal knowledge required)
+- [x] verified student-zero path (no tribal knowledge required)
 
 ---
 
@@ -103,11 +105,17 @@ Goal: Continue can reliably use local CPU models via Ollama.
   - run a Continue prompt (“simplify function”, “add tests”, etc.)
   - apply patch
   - run `pwsh .\scripts\check.ps1 -Fast` and stay green
+  - [ ] run pwsh .\scripts\check.ps1 -WithOllama once (if that flag exists in your script) to prove the wiring works
 
 Deliverable:
 - [ ] confirmed “CPU-only local assistant” works end-to-end
 
 ---
+
+### 6) Deliver the template
+- [ ] confirm this repo is enabled as a GitHub Template repository (Settings → Template repository)
+
+### 7) Test the template with a project
 
 ## Definition of Done (this repo as a template)
 - [ ] Fresh repo passes the “10-minute green” ritual
