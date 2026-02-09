@@ -29,3 +29,21 @@ diff --git a/x b/x
 $p2 = Extract-GitPatchFromRaw -RawText $raw2
 Assert ($p2 -match '^\sdiff --git') "Should extract patch even with fences"
 Assert ($p2 -match '(?m)^\s@@') "Should include hunk header"
+
+3) Tool JSON resolves to a referenced patch file
+
+$tmp = Join-Path $repoRoot "runs_selftest_tool.patch"
+New-Item -ItemType Directory -Force -Path (Split-Path $tmp -Parent) | Out-Null
+Set-Content -LiteralPath $tmp -Value @"
+diff --git a/x b/x
+--- a/x
++++ b/x
+@@ -0,0 +1 @@
++toolfile
+"@ -NoNewline
+
+$json = '{"name":"diff","parameters":{"a":"runs/_selftest_tool.patch","b":"./x"}}'
+$resolved = Resolve-ToolJsonToText -RawText $json -RepoRoot $repoRoot
+Assert ($resolved -match 'toolfile') "Tool JSON should resolve to file contents"
+
+Write-Host "OK: patch.ps1 selftests passed." -ForegroundColor Green
