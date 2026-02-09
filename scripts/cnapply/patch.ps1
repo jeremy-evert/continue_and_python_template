@@ -1,5 +1,13 @@
+# scripts/cnapply/patch.ps1
+# Patch extraction + Continue runner.
+# Handles:
+# - Empty output
+# - Markdown fences
+# - Tool-call JSON output (e.g., {"name":"diff","parameters":{"a":"...","b":"..."}})
+
 function Normalize-Newlines {
     param([AllowEmptyString()][string]$Text)
+    if ($null -eq $Text) { return "" }
     return ($Text -replace "`r`n", "`n" -replace "`r", "`n")
 }
 
@@ -9,14 +17,77 @@ function Strip-CodeFences {
         [AllowEmptyCollection()]
         [string[]]$Lines
     )
-
-    if ($null -eq $Lines) { return @() }
-    if ($Lines.Count -eq 0) { return @() }
-
-    # If we got a single empty element, treat it as "no lines"
-    if ($Lines.Count -eq 1 -and [string]::IsNullOrWhiteSpace($Lines[0])) { return @() }
-
+    if ($null -eq $Lines -or $Lines.Count -eq 0) { return @() }
     return $Lines | Where-Object { $_ -notmatch '^\s*```' }
+}
+
+function Resolve-ToolJsonToText {
+    param(
+        [Parameter(Mandatory)][string]$RawText,
+        [Parameter(Mandatory)][string]$RepoRoot
+    )
+
+    $trim = $RawText.Trim()
+    if (-not $trim) { return "" }
+
+    # Heuristic: looks like JSON object
+    if (-not ($trim.StartsWith("{") -and $trim.EndsWith("}"))) {
+        return $RawText
+    }
+
+    try {
+        $obj = $trim | ConvertFrom-Json -ErrorAction Stop
+    }
+    catch {
+        # Not actually JSON, just starts with '{' sometimes
+        return $RawText
+    }
+
+    # Expected tool-call-ish shapes:
+    # {"name":"diff","parameters":{"a":"./something.patch","b":"./x"}}
+    # Sometimes could be {"tool":"diff", ...} depending on providers.
+    $toolName = $null
+    if ($obj.PSObject.Properties.Name -contains "name") { $toolName = [string]$obj.name }
+    elseif ($obj.PSObject.Properties.Name -contains "tool") { $toolName = [string]$obj.tool }
+
+    if (-not $toolName) {
+        throw "Continue returned JSON but no 'name'/'tool' field was found. Raw: $trim"
+    }
+
+    if ($toolName -ne "diff") {
+        throw "Continue returned tool-call JSON for tool '$toolName', not a unified diff. Raw: $trim"
+    }
+
+    $p = $obj.parameters
+    if (-not $p) {
+        throw "Continue returned diff tool-call JSON but no 'parameters' field. Raw: $trim"
+    }
+
+    # Best guess: parameters.a is the patch file it wants diffed from
+    $candidatePaths = @()
+    foreach ($k in @("a", "patch", "path", "file", "filepath")) {
+        if ($p.PSObject.Properties.Name -contains $k) {
+            $v = [string]$p.$k
+            if ($v) { $candidatePaths += $v }
+        }
+    }
+
+    foreach ($cp in $candidatePaths) {
+        # Resolve relative paths against repo root
+        $resolved = $cp
+        if (-not [System.IO.Path]::IsPathRooted($resolved)) {
+            $resolved = Join-Path $RepoRoot $cp
+        }
+
+        if (Test-Path -LiteralPath $resolved) {
+            $txt = Get-Content -LiteralPath $resolved -Raw
+            if ($txt -and $txt.Trim()) {
+                return $txt
+            }
+        }
+    }
+
+    throw "Continue returned diff tool-call JSON but I couldn't find/read a referenced patch file. Raw: $trim"
 }
 
 function Run-Continue {
@@ -29,25 +100,26 @@ function Run-Continue {
     if (-not (Test-Path -LiteralPath $Config)) { throw "Continue config not found: $Config" }
 
     Write-Info "Running cn (silent) using config: $Config"
+    # NOTE: Invoke-NativeChecked should come from scripts/cnapply/native.ps1
     $raw = Invoke-NativeChecked "cn" { cn --config $Config --silent -p $PromptText }
     Write-Utf8NoBom -Path $RawOutPath -Text $raw
     return $raw
 }
 
 function Extract-GitPatchFromRaw {
-    param([AllowEmptyString()][string]$RawText)
+    param(
+        [AllowEmptyString()]
+        [string]$RawText
+    )
 
-    # If cn returned nothing (or whitespace), there is no patch.
-    if ([string]::IsNullOrWhiteSpace($RawText)) { return $null }
+    if ($null -eq $RawText -or -not $RawText.Trim()) { return $null }
 
     $t = Normalize-Newlines $RawText
-
-    # Split safely; treat empty result as no lines
-    $split = $t -split "`n"
-    $lines = Strip-CodeFences -Lines $split
+    $lines = Strip-CodeFences ($t -split "`n")
 
     if ($null -eq $lines -or $lines.Count -eq 0) { return $null }
 
+    # Find first diff header
     $diffIdx = -1
     for ($i = 0; $i -lt $lines.Count; $i++) {
         if ($lines[$i] -match '^\s*diff --git\s+') { $diffIdx = $i; break }
@@ -56,7 +128,7 @@ function Extract-GitPatchFromRaw {
 
     $patchLines = $lines[$diffIdx..($lines.Count - 1)]
 
-    # Trim trailing whitespace-only lines
+    # Trim trailing blank lines
     while ($patchLines.Count -gt 0 -and ($patchLines[-1].Trim() -eq "")) {
         if ($patchLines.Count -eq 1) { $patchLines = @(); break }
         $patchLines = $patchLines[0..($patchLines.Count - 2)]
@@ -71,6 +143,7 @@ function Extract-GitPatchFromRaw {
 function Test-PatchLooksReal {
     param([Parameter(Mandatory)][string]$PatchText)
 
+    if (-not $PatchText.Trim()) { return $false }
     $p = Normalize-Newlines $PatchText
 
     if ($p -notmatch '(?m)^\s*diff --git\s+') { return $false }
@@ -102,7 +175,8 @@ function New-ValidPatchOrThrow {
         [Parameter(Mandatory)][string]$OutDir,
         [Parameter(Mandatory)][string]$Name,
         [Parameter(Mandatory)][string]$Timestamp,
-        [Parameter(Mandatory)][int]$MaxAttempts
+        [Parameter(Mandatory)][int]$MaxAttempts,
+        [Parameter(Mandatory)][string]$RepoRoot
     )
 
     for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
@@ -112,9 +186,12 @@ function New-ValidPatchOrThrow {
         $prompt = Build-StrictPrompt -BasePrompt $BasePrompt
         $raw = Run-Continue -Config $Config -PromptText $prompt -RawOutPath $rawPath
 
-        $patch = Extract-GitPatchFromRaw -RawText $raw
+        # If cn returned tool-call JSON, translate it into text we can parse
+        $rawResolved = Resolve-ToolJsonToText -RawText $raw -RepoRoot $RepoRoot
+
+        $patch = Extract-GitPatchFromRaw -RawText $rawResolved
         if (-not $patch) {
-            Write-Warn "Attempt $($attempt): no 'diff --git' found (or empty output). Raw saved: $rawPath"
+            Write-Warn "Attempt $($attempt): no 'diff --git' found. Raw saved: $rawPath"
             continue
         }
 
