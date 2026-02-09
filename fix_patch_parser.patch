@@ -1,0 +1,44 @@
+diff --git a/scripts/cnapply/patch.ps1 b/scripts/cnapply/patch.ps1
+index 0000000..0000000 100644
+--- a/scripts/cnapply/patch.ps1
++++ b/scripts/cnapply/patch.ps1
+@@ -1,20 +1,35 @@
+ function Normalize-Newlines {
+     param([Parameter(Mandatory)][string]$Text)
+     return ($Text -replace "`r`n", "`n" -replace "`r", "`n")
+ }
+
+ function Strip-CodeFences {
+-    param([Parameter(Mandatory)][string[]]$Lines)
+-    return $Lines | Where-Object { $_ -notmatch '^\s*```' }
++    param(
++        [AllowEmptyCollection()]
++        [AllowEmptyString()]
++        [string[]]$Lines
++    )
++    if ($null -eq $Lines) { return @() }
++    return $Lines | Where-Object { $_ -notmatch '^\s*```' }
+ }
+
+ function Extract-GitPatchFromRaw {
+-    param([Parameter(Mandatory)][string]$RawText)
++    param(
++        [AllowEmptyString()]
++        [string]$RawText
++    )
++
++    # If cn returned nothing, just say "no patch here"
++    if ([string]::IsNullOrWhiteSpace($RawText)) {
++        return $null
++    }
+
+     $t = Normalize-Newlines $RawText
+-    $lines = Strip-CodeFences ($t -split "`n")
++    # Force array even if split yields a single element
++    $lines = Strip-CodeFences (@($t -split "`n"))
+
+     $diffIdx = -1
+     for ($i = 0; $i -lt $lines.Count; $i++) {
+         if ($lines[$i] -match '^\s*diff --git\s+') { $diffIdx = $i; break }
+     }
+     if ($diffIdx -lt 0) { return $null }
