@@ -1,10 +1,21 @@
 function Normalize-Newlines {
-    param([Parameter(Mandatory)][string]$Text)
+    param([AllowEmptyString()][string]$Text)
     return ($Text -replace "`r`n", "`n" -replace "`r", "`n")
 }
 
 function Strip-CodeFences {
-    param([Parameter(Mandatory)][string[]]$Lines)
+    param(
+        [AllowNull()]
+        [AllowEmptyCollection()]
+        [string[]]$Lines
+    )
+
+    if ($null -eq $Lines) { return @() }
+    if ($Lines.Count -eq 0) { return @() }
+
+    # If we got a single empty element, treat it as "no lines"
+    if ($Lines.Count -eq 1 -and [string]::IsNullOrWhiteSpace($Lines[0])) { return @() }
+
     return $Lines | Where-Object { $_ -notmatch '^\s*```' }
 }
 
@@ -24,10 +35,18 @@ function Run-Continue {
 }
 
 function Extract-GitPatchFromRaw {
-    param([Parameter(Mandatory)][string]$RawText)
+    param([AllowEmptyString()][string]$RawText)
+
+    # If cn returned nothing (or whitespace), there is no patch.
+    if ([string]::IsNullOrWhiteSpace($RawText)) { return $null }
 
     $t = Normalize-Newlines $RawText
-    $lines = Strip-CodeFences ($t -split "`n")
+
+    # Split safely; treat empty result as no lines
+    $split = $t -split "`n"
+    $lines = Strip-CodeFences -Lines $split
+
+    if ($null -eq $lines -or $lines.Count -eq 0) { return $null }
 
     $diffIdx = -1
     for ($i = 0; $i -lt $lines.Count; $i++) {
@@ -37,10 +56,15 @@ function Extract-GitPatchFromRaw {
 
     $patchLines = $lines[$diffIdx..($lines.Count - 1)]
 
+    # Trim trailing whitespace-only lines
     while ($patchLines.Count -gt 0 -and ($patchLines[-1].Trim() -eq "")) {
+        if ($patchLines.Count -eq 1) { $patchLines = @(); break }
         $patchLines = $patchLines[0..($patchLines.Count - 2)]
     }
 
+    if ($patchLines.Count -eq 0) { return $null }
+
+    # Ensure final newline for git apply happiness
     return (($patchLines -join "`n").TrimEnd() + "`n")
 }
 
@@ -90,7 +114,7 @@ function New-ValidPatchOrThrow {
 
         $patch = Extract-GitPatchFromRaw -RawText $raw
         if (-not $patch) {
-            Write-Warn "Attempt $($attempt): no 'diff --git' found. Raw saved: $rawPath"
+            Write-Warn "Attempt $($attempt): no 'diff --git' found (or empty output). Raw saved: $rawPath"
             continue
         }
 
