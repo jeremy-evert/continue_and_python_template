@@ -25,3 +25,7 @@ diff --git a/x b/x
 +++ b/x
 @@ -0,0 +1 @@
 +test
+"@
+$p2 = Extract-GitPatchFromRaw -RawText $raw2
+Assert ($p2 -match '^\sdiff --git') "Should extract patch even with fences"
+Assert ($p2 -match '(?m)^\s@@') "Should include hunk header"
