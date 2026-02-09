@@ -56,7 +56,8 @@ function Invoke-CnApply {
         -OutDir $OutDir `
         -Name $Name `
         -Timestamp $timestamp `
-        -MaxAttempts $MaxAttempts
+        -MaxAttempts $MaxAttempts `
+        -RepoRoot $repoRoot
 
     $patchPath = $gen.PatchPath
     Write-Ok "Patch ready: $patchPath"
@@ -96,14 +97,14 @@ Fix ONLY what is necessary to make: pwsh .\scripts\check.ps1 -Fast pass.
 Failing output:
 $currentOutput
 "@.Trim()
-
             $fixGen = New-ValidPatchOrThrow `
                 -Config $Config `
                 -BasePrompt $fixPrompt `
                 -OutDir $OutDir `
                 -Name $Name `
                 -Timestamp $fixTimestamp `
-                -MaxAttempts $MaxAttempts
+                -MaxAttempts $MaxAttempts `
+                -RepoRoot $repoRoot
 
             Apply-PatchChecked -PatchPath $fixGen.PatchPath
             Write-Ok "Applied auto-fix patch $($i): $($fixGen.PatchPath)"
